@@ -1,0 +1,80 @@
+code,label
+ARA,Arable land
+ARA99,Other arable land crops n.e.c.
+C0000,Cereals for the production of grain (including seed)
+C1000,Cereals (excluding rice) for the production of grain (including seed)
+C1100,Wheat and spelt
+C1110,Common wheat and spelt
+C1111,Common winter wheat and spelt
+C1112,Common spring wheat and spelt
+C1120,Durum wheat
+C1200,Rye and winter cereal mixtures (maslin)
+C1210,Rye
+C1220,Winter cereal mixtures (maslin)
+C1300,Barley
+C1310,Winter barley
+C1320,Spring barley
+C1400,Oats and spring cereal mixtures (mixed grain other than maslin)
+C1410,Oats
+C1420,Spring cereal mixtures (mixed grain other than maslin)
+C1500,Grain maize and corn-cob-mix
+C1600,Triticale
+C1700,Sorghum
+C1900,"Other cereals n.e.c. (buckwheat, millet, canary seed, etc.)"
+C2000,Rice
+C2100,Rice Indica
+C2200,Rice Japonica
+E0000,Seeds and seedlings
+F0000,"Fruits, berries and nuts (excluding citrus fruits, grapes and strawberries)"
+G0000,Plants harvested green from arable land
+G1000,Temporary grasses and grazings
+G2000,Leguminous plants harvested green
+G2100,Lucerne
+G2900,Other leguminous plants harvested green n.e.c.
+G2910,Clover and mixtures
+G3000,Green maize
+G9100,Other cereals harvested green (excluding green maize)
+G9900,Other plants harvested green from arable land n.e.c.
+H9000,Other permanent crops for human consumption n.e.c.
+I0000,Industrial crops
+I1100,Oilseeds
+I1110,Rape and turnip rape seeds
+I1110-1130,"Rape, turnip rape, sunflower seeds and soya"
+I1111,Winter rape and turnip rape seeds
+I1112,Spring rape and turnip rape seeds
+I1120,Sunflower seed
+I1130,Soya
+I1140,Linseed (oilflax)
+I1150,Cotton seed
+I1190,Other oilseed crops n.e.c.
+I2000,Fibre crops
+I2100,Fibre flax
+I2200,Hemp
+I2300,Cotton fibre
+I2900,Other fibre crops n.e.c.
+I3000,Tobacco
+I4000,Hops
+I5000,"Aromatic, medicinal and culinary plants"
+I6000,Energy crops n.e.c.
+I9000,Other industrial crops n.e.c.
+J0000,Permanent grassland
+K0000,Kitchen gardens
+L0000,Nurseries
+N0000,Flowers and ornamental plants (excluding nurseries)
+O1000,Olives
+P0000,Dry pulses and protein crops for the production of grain (including seed and mixtures of cereals and pulses)
+P1100,Field peas
+P1200,Broad and field beans
+P1300,Sweet lupins
+P9000,Other dry pulses and protein crops n.e.c.
+PECR,Permanent crops
+PECR9,Other permanent crops
+Q0000,Fallow land
+R0000,Root crops
+R1000,Potatoes (including seed potatoes)
+R2000,Sugar beet (excluding seed)
+R9000,Other root crops n.e.c.
+T0000,Citrus fruits
+UAA,Utilised agricultural area
+V0000_S0000,Fresh vegetables (including melons) and strawberries
+W1000,Grapes

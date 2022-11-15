@@ -1,0 +1,37 @@
+#' Computing average unit values values of a given agricultural crop (according to the Corine land classification)
+#'
+#' This function computes the average unit values of a given (agricultural and grassland) Corine class
+#' for each Italian level 2 NUTS regions. Values are expressed in euro/ha.
+#'
+#' @inheritParams compute_area
+#' @return A tibble with NUTS2 codes, corine3 codes and average production value in the time frame specified
+#'     (expressed in constat euro/ha, at the prices of `last_yr`).
+#' @export
+#' @examples
+#'
+#' compute_unit_values(
+#' nuts = c("Italia", "Umbria", "Puglia"),
+#' h = 3,
+#' last_yr = 2019,
+#' corine_code = c("2.1.1", "2.2.2", "2.4.2")
+#' )
+#'
+compute_unit_values <- function (nuts = "Italia", h = 3, last_yr, corine_code) {
+
+  areas <- compute_area(nuts = nuts,
+                        h = h,
+                        last_yr = last_yr,
+                        corine_code = corine_code)
+
+  values <- compute_value(nuts = nuts,
+                          h = h,
+                          last_yr = last_yr,
+                          corine_code = corine_code)
+
+  unit_values <- areas %>%
+    dplyr::left_join(values) %>%
+    dplyr::mutate(unit_value = value / area * 1000)
+
+  unit_values
+
+}

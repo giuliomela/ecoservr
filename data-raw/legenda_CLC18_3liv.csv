@@ -1,0 +1,45 @@
+﻿codice 3° livello;descrizione
+111;Zone residenziali a tessuto continuo
+112;Zone residenziali a tessuto discontinuo e rado
+121;Aree industriali, commerciali e dei servizi pubblici e privati
+122;Reti stradali, ferroviarie e infrastrutture tecniche
+123;Aree portuali
+124;Aeroporti
+131;Aree estrattive
+132;Discariche
+133;Cantieri
+141;Aree verdi urbane
+142;Aree ricreative e sportive
+211;Seminativi in aree non irrigue
+212;Seminativi in aree irrigue
+213;Risaie
+221;Vigneti
+222;Frutteti e frutti minori
+223;Oliveti
+231;Prati stabili (foraggere permanenti)
+241;Colture temporanee associate a colture permanenti
+242;Sistemi colturali e particellari complessi
+243;Aree prevalentemente occupate da colture agrarie con presenza di spazi naturali importanti
+244;Aree agroforestali
+311;Boschi di latifoglie
+312;Boschi di conifere
+313;Boschi misti di conifere e latifoglie
+321;Aree a pascolo naturale e praterie
+322;Brughiere e cespuglieti
+323;Aree a vegetazione sclerofilla
+324;Aree a vegetazione boschiva ed arbustiva in evoluzione
+331;Spiagge, dune e sabbie
+332;Rocce nude, falesie, rupi, affioramenti
+333;Aree con vegetazione rada
+334;Aree percorse da incendi
+335;Ghiacciai e nevi perenni
+411;Paludi interne
+412;Torbiere
+421;Paludi salmastre
+422;Saline
+423;Zone intertidali
+511;Corsi d'acqua, canali e idrovie
+512;Bacini d'acqua
+521;Lagune
+522;Estuari
+523;Mari e oceani
