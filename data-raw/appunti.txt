@@ -1,0 +1,8 @@
+Creare funzione BT per nuts2 > pacchetto btransfer
+
+Creare funzione per assegnazione valori paesaggio a classi corine > ecovalr
+	- Aggiungi correttivo per presenza aree industriali (più dell'11%)
+	- Aggiungi correttivo per presenza ostacoli primo e secondo piano
+	- Opzione per escludere classi corine urban e forest
+
+

@@ -28,7 +28,7 @@ most_common_crop <- function(nuts = "Italia", h = 3, last_yr) {
 
   # filtering codes referring to arable land only
 
-  metadata <- master_table[master_table$corine3_code == "2.1.1", c("value_label", "area_code", "strucpro")]
+  metadata <- master_table_agr[master_table_agr$corine3_code == 211, c("value_label", "area_code", "strucpro")]
 
   # dowloading area data
 
