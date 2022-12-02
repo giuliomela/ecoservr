@@ -10,6 +10,8 @@
 #'
 compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, corine_code) {
 
+  code <- original_period <- corine3_code <- defl <- value_label <- value_code <- unit <- fct <- NULL
+
   if (212 %in% corine_code)
     stop("The Corine 3 class '212' (Permanently irrigated land) cannot be selected. Please use '211' (non-irrigated arable land) instead.")
 
@@ -55,6 +57,9 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
 
   data_raw <- rdbnomics::rdb(unique(metadata$full_code))
 
+  data_raw <- data_raw %>%
+    dplyr::rename(code = geo)
+
   # summarizing data
 
   time_period <- as.character(c((last_yr - h + 1):last_yr))
@@ -63,7 +68,7 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
 
   data_raw <- data_raw %>%
     dplyr::left_join(corine_codes) %>%
-    dplyr::group_by(geo, original_period, corine3_code) %>%
+    dplyr::group_by(code, original_period, corine3_code) %>%
     dplyr::summarise(value = sum(value, na.rm = TRUE)) %>%
     dplyr::ungroup()
 
@@ -76,7 +81,7 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
   avg_values <- data_raw %>%
     dplyr::left_join(gdp_defl) %>%
     dplyr::mutate(value = value / defl * ref_yr_dfl) %>%
-    dplyr::group_by(geo, corine3_code) %>%
+    dplyr::group_by(code, corine3_code) %>%
     dplyr::summarise(value = mean(value, na.rm = TRUE)) %>%
     dplyr::ungroup()
 
@@ -86,7 +91,7 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
 
     # If the chosen Corine class is "arable land" the most common crop grown in the region is identified
 
-    main_crop <- most_common_crop(nuts, h, last_yr)[, c("geo", "value_label")]
+    main_crop <- most_common_crop(nuts, h, last_yr)[, c("code", "value_label")]
 
     metadata_arable <- master_table_agr %>%
       dplyr::filter(value_label %in% main_crop$value_label) %>%
@@ -96,12 +101,15 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
                                        ".",
                                        unit,
                                        ".",
-                                       geo))
+                                       code))
 
     data_raw_arable <- rdbnomics::rdb(metadata_arable$full_code)
 
     data_raw_arable <- data_raw_arable %>%
-      dplyr::group_by(geo, original_period) %>%
+      dplyr::rename(code = geo)
+
+    data_raw_arable <- data_raw_arable %>%
+      dplyr::group_by(code, original_period) %>%
       dplyr::summarise(value = sum(value, na.rm = TRUE)) %>%
       dplyr::ungroup()
 
@@ -114,7 +122,7 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
     avg_values_arable <- data_raw_arable %>%
       dplyr::left_join(gdp_defl) %>%
       dplyr::mutate(value = value / defl * ref_yr_dfl) %>%
-      dplyr::group_by(geo) %>%
+      dplyr::group_by(code) %>%
       dplyr::summarise(value = mean(value, na.rm = TRUE)) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(corine3_code = 211)

@@ -19,6 +19,8 @@
 #' most_common_crop(last_yr = 2019)
 most_common_crop <- function(nuts = "Italia", h = 3, last_yr) {
 
+  original_period <- value_label <- value <- NULL
+
   if (any(!is.element(nuts, nuts2_codes$label)) == TRUE)
     stop(paste0("Please provide a valid NUTS2 name. Pick a name among: ",
                 knitr::combine_words(nuts2_codes$label, and = "or ")))
@@ -61,7 +63,8 @@ most_common_crop <- function(nuts = "Italia", h = 3, last_yr) {
   output <- data_raw %>%
     dplyr::group_by(geo) %>%
     dplyr::filter(value == max(value, na.rm = TRUE)) %>%
-    dplyr::ungroup()
+    dplyr::ungroup() %>%
+    dplyr::rename(code = geo)
 
   output
 

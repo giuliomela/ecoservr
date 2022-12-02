@@ -1,4 +1,4 @@
-#' Computes the economic value of pollination services for Italian NUTS2 regions.
+#' Computes the economic value of pollination services for Italian NUTS2 regions
 #'
 #' This function computes the economic value of the contribution of the pollination service to
 #' agricultural production. Starting from the average value of the insect pollinated crops in a
@@ -6,19 +6,22 @@
 #' "pollination" on the basis of the share of each insect pollinated crop on total regional
 #' utilized agricultural area and crop-specific pollination contribution coeffcients (how much
 #' of a crop's total output is due to pollinaton services) taking into account the fact
-#' that not all of pollination demand is actually met (see table 4.5 in Vallecillo, S et al. 2018).
+#' that not all of pollination demand is actually met (see table 4.5 in Vallecillo, S et al. 2018)
 #'
 #' @inheritParams compute_agr_area
 #' @param pol_dependence A string. It allows the user to choose between crop-specific coefficients
 #'     provided by either the JRS (`jrc`) or ISPRA (`ispra`) or a nation-wide average (still based on
-#'     Ispra data: `ita_avg` of 10.4%).
+#'     Ispra data: `ita_avg` of 10.4\%)
+#' @param ref_yr A numeric value. The year at which price levels monetary values must be expressed.
 #' @return A tibble with the economic value of pollination services in each of the NUTS2 selected.
-#'     Values are expressed in euro/ha at constant prices (as specified through `ref_yr`).
+#'     Values are expressed in euro/ha at constant prices (as specified through `ref_yr`)
+#' @export
 #' @examples
-#'
 #' pollination_value(nuts = c("Italia", "Umbria"))
 pollination_value <- function(nuts = "Italia", last_yr = 2019, h = 3, ref_yr = 2019,
                               pol_dependence = "ispra") {
+
+  unit_value <- area_share <- dependence_ispra <- dependence_jrc <- label <- NULL
 
   if(!pol_dependence %in% c("ispra", "jrc", "ita_avg"))
     stop("Please provide a valid value for 'pol_dependence': 'ipsra', 'jrc' or 'ita_avg'")

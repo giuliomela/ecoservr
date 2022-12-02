@@ -36,5 +36,6 @@ This function computes region-specific landscape values startin from literature 
 corine land cover classes and MAES ecosystems for which literature values are available.
 }
 \examples{
-landscape_value(nuts = c("Italia", "Umbria"), corine_code = c(222, 321), policy_yr = 2019, ref_yr = 2019)
+landscape_value(nuts = c("Italia", "Umbria"),
+corine_code = c(222, 321), policy_yr = 2019, ref_yr = 2019)
 }

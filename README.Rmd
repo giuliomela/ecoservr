@@ -1,0 +1,126 @@
+---
+output: github_document
+bibliography: data-raw/se_biblio.bib
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+
+library(tidyverse)
+```
+
+# ecoservr
+
+The goal of ecoservr is to provide useful functions to estimate the economic value of
+some ecosystem services in Italian NUTS2 regions
+
+## Installation
+
+You can install the development version of ecoservr from [GitHub](https://github.com/) with:
+
+``` {r install, eval = FALSE, echo = TRUE} 
+# install.packages("devtools")
+devtools::install_github("giuliomela/ecoservr")
+```
+
+## Usage
+
+The `ecoservr` package allows the quantification of some ecosystem services and their 
+economic evaluation. Ecosystem services currently covered by this package are:
+
+- Provisioning services
+    - Food (agricultural production)
+    - Timber (forest products)
+- Pollination services
+- Landscape
+
+The starting point for the estimation is the Corine land cover class (third level) of
+the area for which the estimation must be carried out. Using the Corine - MAES correspondance
+table, it is possible to associate, to each Corine class, a specific ecosystem. Since the 
+Corine classification is more detailed than the [MAES ecosystem one](https://ec.europa.eu/environment/nature/knowledge/ecosystem_assessment/index_en.htm) it is
+used to better refine the estimation technique. For example, when evaluating provisioning 
+services knowing that a given agricultural is arable land and not, for example, an olive
+grove, can dramatically improve the reliability of the estimation.
+
+### Provisioning services
+
+Function `provisioning_value` computes the ecosystems' contribution in the provision of
+food and wood. Returned values are expressed in euro/ha for each of the 21 Italian
+regions (NUTS2) and for Italy as a whole.
+The estimation is carried out following the approach proposed by the Joint Research Centre
+of the European Union [@europeancommission.jointresearchcentre.2019] in which so-called
+"eco-con" coefficients - representing ecosystems' contribution to agricultural and 
+forestry production - are applied to the total value of production for a specific year
+or period of time. The ecosystem contribution can be thought as the share of total production that 
+is the direct consequence of ecosystems' contribution.
+The function takes, as parameters, the names of the Italian regions (NUTS2) of interest, 
+the time horizon (expressed in years) over which computing unit production values, the last
+year for which considering actual data (on production and cropped areas), the year at which prices all values must be expressed at, and the Corine codes of interest. Only Corine classes belonging to the
+`Cropland` and `Woodland and forest` ecosystems can be selected. Corine class `212` (irrigated arable
+land) cannot be selected because it is not possible to distinguish the crops grown on it from those
+cropped on class `211` (non-irrigated arable land) Class `212`, nonetheless, is characterized by a very
+limited extention in Italy.
+
+```{r exmple-provisioning, echo = TRUE, eval=FALSE}
+
+nuts <- c("Italia", "Umbria", "Puglia", "Lombardia")
+
+last_yr <-  2019
+
+corine_codes_all <- c(211, 213, 221, 222, 223, 241, 242, 243, 244, 311, 312, 313, 324)
+
+provisioning_value(nuts = nuts, h = 3,
+                   last_yr = last_yr, ref_yr = 2019, corine_code = corine_codes_all)
+
+```
+The output of `provisioning_value` is a tibble containing information on Region name, 
+Corine land cover code, ecosystem, production unit value (average of the last `h` years backwards
+from `last_yr`), ecosystem contribution coefficient (in a scale from `0` to `1`) and ecosystem contribution proper, expressed in euro/ha at `ref_yr` price levels. For Corine land cover class `211` (non-irrigated arable land) production value and areas from the most common crop grown in the 
+region are used.
+In the case of Corine land cover classes:  _Land principally occupied by agriculture, with significant areas of natural vegetation_ and _Complex cultivation patterns_, areas are multiplied by `0.5` since, according to the [definition](https://land.copernicus.eu/user-corner/technical-library/corine-land-cover-nomenclature-guidelines/html/index-clc-242.html) such areas are characterized by a natural cover share between 25 and 75%.
+Total areas are halved also in the case of class _Natural grasslands_ and _Agro-forestry areas_.
+
+### Pollination services
+
+The economic value of pollination services is estimated by function `pollination_value`. The estimation is carried out following the same methodology used to calculate the provisioning value: a coefficient reflecting insect pollination contribution to agricultural production is used. Such coefficients (see ISPRA report on Natural Capital [@ispra2018]) are crop-specific and consider also the fact that not all pollination demand is actually met. Alternatively, crop-specific coefficients from the JRC or the Italian national average can be used (see function documentation).
+
+```{r example-pollination, echo=TRUE, eval=FALSE}
+
+pollination_value(
+  nuts = nuts,
+  last_yr = 2019,
+  h = 3,
+  ref_yr = 2019,
+  pol_dependence = "ispra"
+)
+
+
+
+```
+
+### Landscape values
+
+The landscape value is estimated using literature values, upon value transfer to the policy region and year of interest. Landscape values are available for some Corine land cover classes/MAES ecosystems: agricultural land (arable land and permanent crops), grasslands and forests. More values could be included in the future upon additional revisions of the literature. The user can decided whether to include forest values in the estimation since visibility, from inside a forest, is null and no landscape is actually visible. Other parameters of the function `landscape_value` are similar to those of the other functions of the package.
+
+```{r example-landscape, echo=TRUE, eval=FALSE}
+
+landscape_value(
+  nuts = nuts,
+  include_forest = FALSE,
+  corine_code = corine_codes_all,
+  policy_yr = 2019,
+  ref_yr = 2019,
+  epsilon = 0.2
+)
+
+
+```
+
+# References

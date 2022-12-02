@@ -14,9 +14,12 @@
 #'     study and policy areas
 #' @export
 #' @examples
-#' landscape_value(nuts = c("Italia", "Umbria"), corine_code = c(222, 321), policy_yr = 2019, ref_yr = 2019)
+#' landscape_value(nuts = c("Italia", "Umbria"),
+#' corine_code = c(222, 321), policy_yr = 2019, ref_yr = 2019)
 landscape_value <- function (nuts = "Italia", include_forest = FALSE, corine_code,
                              policy_yr, ref_yr, epsilon = 0.2){
+
+  corine3_code <- maes <- value <- study_area <- study_year <- NULL
 
   data_raw <- landscape_values_raw %>%
     dplyr::filter(corine3_code %in% corine_code) %>%

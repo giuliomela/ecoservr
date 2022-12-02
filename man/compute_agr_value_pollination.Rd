@@ -17,6 +17,8 @@ must be in Italian and chosen among the folloqing list: `r knitr::combine_words(
 `Bolzano` and `Trento` are treated as separate regions. Data on `Italia` as a whole can be retrieved
 as well.}
 
+\item{ref_yr}{A numeric value. The year at which price levels monetary values must be expressed.}
+
 \item{last_yr}{An integer. The latest (meaning most recent) year from which computing average areas.}
 
 \item{h}{An integer. A number specifying the number of years over which computing average areas. Default value

@@ -7,11 +7,15 @@
 #' quantify the ecosystems' contribution to crop pollination.
 #'
 #' @inheritParams compute_agr_area
+#' @param ref_yr A numeric value. The year at which price levels monetary values must be expressed.
 #' @return A tibble with unit values, expressed at `ref_yr` prices, of the main crops
 #'     that benefit from insect pollination for Italy and all Italian NUTS2 regions.
 #'
 compute_agr_value_pollination <- function (nuts = "Italia", ref_yr = 2019,
                                            last_yr = 2019, h = 3) {
+
+  year <- label <- rse_class <- area <- geo <- original_period <- series_code <- value <- defl <-
+    crop_label <- A.02910.PROD_BP.MIO_EUR.IT <- A.I2000.AR.IT <- unit_value <- NULL
 
   nuts_code <- nuts2_codes[nuts2_codes$label %in% nuts, ]$code
 
@@ -177,6 +181,11 @@ compute_agr_value_pollination <- function (nuts = "Italia", ref_yr = 2019,
                   .keep = "unused")  %>% # unit value in euro/ha, constant prices
    dplyr::bind_rows(fiber_unit_value)
 
-  unit_values_pollination
+  unit_values_pollination %>%
+    dplyr::mutate(unit_value = ifelse(
+      is.na(unit_value),
+      0,
+      unit_value
+    ))
 
 }

@@ -20,6 +20,10 @@
 compute_eco_con_forest <- function(nuts = "Italia", eco_con_timber = 0.97, nai_value = 0.402,
                                    ref_yr, forestry_data_yr = 2015) {
 
+  area_share <- corine3_code <- corine3_label <- dependence_ispra <- dependence_jrc <-
+  eco_con_coeff<- eco_contribution <- faws <- label <- maes <- nai_euro <- nai_m3_faws <-
+  original_period <- unit_value <- value <- value_label <- NULL
+
   if (any(!is.element(nuts, nuts2_codes$label)) == TRUE)
     stop(paste0("Please provide a valid NUTS2 name. Pick a name among: ",
                 knitr::combine_words(nuts2_codes$label, and = "or ")))
@@ -42,13 +46,12 @@ compute_eco_con_forest <- function(nuts = "Italia", eco_con_timber = 0.97, nai_v
   nai_ita_m3 <- nai_value_ita / forestry_data[forestry_data$label == "Italia", ]$nai_m3_faws * 10^6
 
   results <- forestry_data %>%
-    dplyr::filter(label == nuts) %>%
-    dplyr::mutate(nuts = nuts,
-                  nai_euro = nai_m3_faws * nai_ita_m3,
+    dplyr::filter(label %in% nuts) %>%
+    dplyr::mutate(nai_euro = nai_m3_faws * nai_ita_m3,
                   unit_value = nai_euro / faws,
                   eco_contribution = unit_value * eco_con_timber,
                   eco_con_coeff = eco_con_timber) %>%
-    dplyr::select(nuts, unit_value, eco_con_coeff, eco_contribution)
+    dplyr::select(label, unit_value, eco_con_coeff, eco_contribution)
 
   results
 

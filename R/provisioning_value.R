@@ -12,8 +12,11 @@
 #' @export
 #' @examples
 #'
-#' compute_eco_con(nuts = c("Umbria", "Puglia"), last_yr = 2019, ref_yr = 2019, corine_code = c("2.1.1", "2.2.2", "2.3.1"))
+#' provisioning_value(nuts = c("Umbria", "Puglia"),
+#' last_yr = 2019, ref_yr = 2019, corine_code = c(211, 222, 231))
 provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, corine_code) {
+
+  corine3_code <- value_label <- unit_value <- label <- corine3_label <- maes <- NULL
 
   cropland_codes <- intersect(corine_code, maes_corine[maes_corine$maes %in% c("Cropland", "Grasslands"), ]$corine3_code) # subvector of cropland codes
 
@@ -55,9 +58,9 @@ provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, c
   # Preparing final output
 
   eco_contr_cropland <- eco_contribution %>%
-    dplyr::mutate(nuts = nuts) %>%
+    dplyr::left_join(nuts2_codes) %>%
     dplyr::left_join(maes_corine) %>%
-    dplyr::select(nuts, corine3_code, corine3_label, maes, unit_value, eco_con_coeff, eco_contribution)
+    dplyr::select(label, corine3_code, corine3_label, maes, unit_value, eco_con_coeff, eco_contribution)
 
   } else {
 
@@ -73,13 +76,13 @@ provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, c
   eco_contr_forest <- compute_eco_con_forest(ref_yr = ref_yr)
 
   eco_contr_forest <- eco_contr_forest %>%
-    dplyr::slice(rep(1:n(), each = length(forest_codes)))
+    dplyr::slice(rep(1:dplyr::n(), each = length(forest_codes)))
 
   eco_contr_forest$corine3_code <- forest_codes
 
   eco_contr_forest <- eco_contr_forest %>%
     dplyr::left_join(maes_corine) %>%
-    dplyr::select(nuts, corine3_code, corine3_label, maes, unit_value, eco_con_coeff, eco_contribution)
+    dplyr::select(label, corine3_code, corine3_label, maes, unit_value, eco_con_coeff, eco_contribution)
 
   } else {
 
@@ -89,19 +92,19 @@ provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, c
 
   if (length(other_codes) > 0) {
 
-    eco_contr_other <- dplyr::tibble(nuts = nuts,
+    eco_contr_other <- dplyr::tibble(label = nuts,
                                      unit_value = 0,
                                      eco_con_coeff = 0,
                                      eco_contribution = 0)
 
     eco_contr_other <- eco_contr_other %>%
-      dplyr::slice(rep(1:n(), each = length(other_codes)))
+      dplyr::slice(rep(1:dplyr::n(), each = length(other_codes)))
 
     eco_contr_other$corine3_code <- other_codes
 
     eco_contr_other <- eco_contr_other %>%
       dplyr::left_join(maes_corine) %>%
-      dplyr::select(nuts, corine3_code, corine3_label, maes, unit_value, eco_con_coeff, eco_contribution)
+      dplyr::select(label, corine3_code, corine3_label, maes, unit_value, eco_con_coeff, eco_contribution)
 
   } else {
 

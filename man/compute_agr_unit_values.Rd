@@ -38,11 +38,11 @@ for each Italian level 2 NUTS regions. Values are expressed in euro/ha.
 }
 \examples{
 
-compute_unit_values(
+compute_agr_unit_values(
 nuts = c("Italia", "Umbria", "Puglia"),
 h = 3,
 last_yr = 2019,
-corine_code = c("2.1.1", "2.2.2", "2.4.2")
+corine_code = c(211, 222, 242)
 )
 
 }

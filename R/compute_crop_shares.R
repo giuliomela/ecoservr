@@ -7,6 +7,10 @@
 #' @return A tibble with NUTS labels and codes and the share of insect pollinated crops on total UAA.
 compute_crop_shares <- function (nuts = "Italia", last_yr = 2019, h = 3){
 
+  year <- label <- rse_class <- area <- geo <- original_period <- value <- code <- area_share <- label <-
+    nai_m3_faws <- nai_euro <- faws <- unit_value <- eco_con_coeff <- eco_contribution <-
+    NULL
+
   # computing average areas in the chosen period
 
   period <- c((last_yr - h + 1):last_yr)

@@ -10,14 +10,16 @@
 #' @export
 #' @examples
 #'
-#' compute_unit_values(
+#' compute_agr_unit_values(
 #' nuts = c("Italia", "Umbria", "Puglia"),
 #' h = 3,
 #' last_yr = 2019,
-#' corine_code = c("2.1.1", "2.2.2", "2.4.2")
+#' corine_code = c(211, 222, 242)
 #' )
 #'
 compute_agr_unit_values <- function (nuts = "Italia", h = 3, last_yr, ref_yr = 2019, corine_code) {
+
+  area <- value <- NULL
 
   areas <- compute_agr_area(nuts = nuts,
                         h = h,
@@ -32,7 +34,10 @@ compute_agr_unit_values <- function (nuts = "Italia", h = 3, last_yr, ref_yr = 2
 
   unit_values <- areas %>%
     dplyr::left_join(values) %>%
-    dplyr::mutate(unit_value = value / area * 1000)
+    dplyr::mutate(unit_value = ifelse(area == 0 | value == 0,
+                                      0,
+                                      value / area * 1000)
+    )
 
   unit_values
 

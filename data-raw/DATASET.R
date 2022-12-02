@@ -195,10 +195,15 @@ pollination_dependence <- readxl::read_xlsx(here::here("data-raw/data_raw.xlsx")
 landscape_values_raw <- readxl::read_xlsx(here::here("data-raw/data_raw.xlsx"),
                                  sheet = "landscape_values")
 
+
+
 usethis::use_data(nuts2_codes, master_table_agr, val_prod_forest, forestry_data,
                   maes_corine, crop_area_istat, crop_value_istat, pollination_dependence,
                   landscape_values_raw,
                   overwrite = TRUE, internal = TRUE)
+
+usethis::use_data(nuts2_codes, master_table_agr,
+                  maes_corine, internal = FALSE)
 
 
 

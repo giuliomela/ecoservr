@@ -10,18 +10,21 @@
 #'
 compute_agr_area <- function(nuts = "Italia", h = 3, last_yr, corine_code) {
 
+  original_period <- corine3_code <- value <- code <- value_label <- NULL
+
   if (any(!is.element(nuts, nuts2_codes$label)) == TRUE)
     stop(paste0("Please provide a valid NUTS2 name. Pick a name among: ",
                 knitr::combine_words(nuts2_codes$label, and = "or ")))
 
-  if (212 %in% corine_code)
-    stop("The Corine 3 class '212' (Permanently irrigated land) cannot be selected. Please use '211' (non-irrigated arable land) instead.")
+  admitted_corine_codes <- intersect(corine_code,
+                                     unique(master_table_agr$corine3_code)
+  )
 
   geo <- nuts2_codes[nuts2_codes$label %in% nuts, ]$code
 
-  if (!is.element(211, corine_code) | 211 %in% corine_code & length(corine_code) > 1) {
+  if (!is.element(211, admitted_corine_codes) | 211 %in% corine_code & length(admitted_corine_codes) > 1) {
 
-    metadata <- master_table_agr[master_table_agr$corine3_code %in% corine_code[corine_code != 211], # exluding arable land
+    metadata <- master_table_agr[master_table_agr$corine3_code %in% admitted_corine_codes[admitted_corine_codes != 211], # exluding arable land
                              c("value_label", "area_code", "strucpro", "corine3_code")]
 
     metadata <- lapply(geo, function(x){
@@ -73,28 +76,29 @@ compute_agr_area <- function(nuts = "Italia", h = 3, last_yr, corine_code) {
     dplyr::group_by(geo, corine3_code) %>%
     dplyr::summarise(area = mean(value, na.rm = TRUE)) %>%
     dplyr::ungroup() %>%
-    dplyr::mutate(value_label = NA_character_)
+    dplyr::mutate(value_label = NA_character_) %>%
+    dplyr::rename(code = geo)
 
   }
 
-  if (is.element(211, corine_code)) {
+  if (is.element(211, admitted_corine_codes)) {
 
     # If the chosen Corine class is "arable land" the most common crop grown in the region is identified
 
     main_crop <- ecoservr::most_common_crop(nuts, h, last_yr)
 
     main_crop <- main_crop %>%
-      dplyr::select(geo, value_label, area = value) %>%
+      dplyr::select(code, value_label, area = value) %>%
       dplyr::mutate(corine3_code = 211)
 
 
   }
 
-  if (length(corine_code) == 1 & 211 %in% corine_code) {
+  if (length(admitted_corine_codes) == 1 & 211 %in% admitted_corine_codes) {
 
     main_crop
 
-  } else if (!is.element(211, corine_code)){
+  } else if (!is.element(211, admitted_corine_codes)){
 
     avg_areas
 

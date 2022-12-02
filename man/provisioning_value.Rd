@@ -34,5 +34,6 @@ for each of the Italian NUTS 2 regions and each of the Corine 3 classes selected
 }
 \examples{
 
-compute_eco_con(nuts = c("Umbria", "Puglia"), last_yr = 2019, ref_yr = 2019, corine_code = c("2.1.1", "2.2.2", "2.3.1"))
+provisioning_value(nuts = c("Umbria", "Puglia"),
+last_yr = 2019, ref_yr = 2019, corine_code = c(211, 222, 231))
 }

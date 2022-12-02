@@ -2,7 +2,7 @@
 % Please edit documentation in R/pollination_value.R
 \name{pollination_value}
 \alias{pollination_value}
-\title{Computes the economic value of pollination services for Italian NUTS2 regions.}
+\title{Computes the economic value of pollination services for Italian NUTS2 regions}
 \usage{
 pollination_value(
   nuts = "Italia",
@@ -23,13 +23,15 @@ as well.}
 \item{h}{An integer. A number specifying the number of years over which computing average areas. Default value
 is `3`.}
 
+\item{ref_yr}{A numeric value. The year at which price levels monetary values must be expressed.}
+
 \item{pol_dependence}{A string. It allows the user to choose between crop-specific coefficients
 provided by either the JRS (`jrc`) or ISPRA (`ispra`) or a nation-wide average (still based on
-Ispra data: `ita_avg` of 10.4%).}
+Ispra data: `ita_avg` of 10.4\%)}
 }
 \value{
 A tibble with the economic value of pollination services in each of the NUTS2 selected.
-    Values are expressed in euro/ha at constant prices (as specified through `ref_yr`).
+    Values are expressed in euro/ha at constant prices (as specified through `ref_yr`)
 }
 \description{
 This function computes the economic value of the contribution of the pollination service to
@@ -38,9 +40,8 @@ given time horizon (user-defined) it computes the average value of the ecosystem
 "pollination" on the basis of the share of each insect pollinated crop on total regional
 utilized agricultural area and crop-specific pollination contribution coeffcients (how much
 of a crop's total output is due to pollinaton services) taking into account the fact
-that not all of pollination demand is actually met (see table 4.5 in Vallecillo, S et al. 2018).
+that not all of pollination demand is actually met (see table 4.5 in Vallecillo, S et al. 2018)
 }
 \examples{
-
 pollination_value(nuts = c("Italia", "Umbria"))
 }
