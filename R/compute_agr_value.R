@@ -10,7 +10,8 @@
 #'
 compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, corine_code, lang = "it") {
 
-  code <- original_period <- corine3_code <- defl <- value_label <- value_code <- unit <- fct <- NULL
+  code <- original_period <- corine3_code <- defl <- value_label <- value_label_it <-
+    value_label_en <- value_code <- unit <- fct <- NULL
 
   if (212 %in% corine_code)
     stop("The Corine 3 class '212' (Permanently irrigated land) cannot be selected. Please use '211' (non-irrigated arable land) instead.")
@@ -32,7 +33,7 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
 
 
       metadata <- ecoservr::master_table_agr[ecoservr::master_table_agr$corine3_code %in% corine_code, # excluding arable land
-                                   c("value_label_it", "area_code", "strucpro", "corine3_code")]
+                                   c("value_label_it", "corine3_code", "value_code", "unit")]
 
       metadata$value_label <- metadata$value_label_it
 
@@ -41,7 +42,7 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
     } else {
 
       metadata <- ecoservr::master_table_agr[ecoservr::master_table_agr$corine3_code %in% corine_code, # excluding arable land
-                                   c("value_label_en", "area_code", "strucpro", "corine3_code")]
+                                   c("value_label_en", "corine3_code", "value_code", "unit")]
 
       metadata$value_label <- metadata$value_label_en
 
@@ -109,17 +110,43 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
 
     # If the chosen Corine class is "arable land" the most common crop grown in the region is identified
 
-    main_crop <- most_common_crop(nuts, h, last_yr)[, c("code", "value_label")]
+    main_crop <- most_common_crop(nuts, h, last_yr, lang = lang)[, c("code", "value_label")]
 
-    metadata_arable <- ecoservr::master_table_agr %>%
-      dplyr::filter(value_label %in% main_crop$value_label) %>%
-      dplyr::left_join(main_crop) %>%
-      dplyr::mutate(full_code = paste0("Eurostat/agr_r_accts/A.PROD_BP.",
-                                       value_code,
-                                       ".",
-                                       unit,
-                                       ".",
-                                       code))
+    if (lang == "it") {
+
+      metadata_arable <- ecoservr::master_table_agr %>%
+        dplyr::filter(value_label_it %in% main_crop$value_label) %>%
+        dplyr::left_join(main_crop, by = c("value_label_it" = "value_label")) %>%
+        dplyr::mutate(full_code = paste0("Eurostat/agr_r_accts/A.PROD_BP.",
+                                         value_code,
+                                         ".",
+                                         unit,
+                                         ".",
+                                         code))
+
+      metadata_arable$value_label <- metadata_arable$value_label_it
+
+      metadata_arable$value_label_it <- NULL
+
+    } else {
+
+      metadata_arable <- ecoservr::master_table_agr %>%
+        dplyr::filter(value_label_en %in% main_crop$value_label) %>%
+        dplyr::left_join(main_crop, by = c("value_label_en" = "value_label")) %>%
+        dplyr::mutate(full_code = paste0("Eurostat/agr_r_accts/A.PROD_BP.",
+                                         value_code,
+                                         ".",
+                                         unit,
+                                         ".",
+                                         code))
+
+      metadata_arable$value_label <- metadata_arable$value_label_en
+
+      metadata_arable$value_label_en <- NULL
+
+    }
+
+
 
     data_raw_arable <- rdbnomics::rdb(metadata_arable$full_code)
 

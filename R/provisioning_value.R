@@ -14,7 +14,7 @@
 #'
 #' provisioning_value(nuts = c("Umbria", "Puglia"),
 #' last_yr = 2019, ref_yr = 2019, corine_code = c(211, 222, 231))
-provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, corine_code) {
+provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, corine_code, lang = "it") {
 
   corine3_code <- value_label <- unit_value <- label <- corine3_label_en <- corine3_label_it <- maes <- NULL
 
@@ -34,7 +34,25 @@ provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, c
                                      ref_yr = ref_yr,
                                      corine_code = cropland_codes)
 
-  eco_con_coeff <- unique(ecoservr::master_table_agr[, c("value_label", "corine3_code", "eco_con_coeff")])
+  if (lang == "it") {
+
+    eco_con_coeff <- unique(ecoservr::master_table_agr[, c("value_label_it", "corine3_code", "eco_con_coeff")])
+
+    eco_con_coeff$value_label <- eco_con_coeff$value_label_it
+
+    eco_con_coeff$value_label_it <- NULL
+
+  } else {
+
+    eco_con_coeff <- unique(ecoservr::master_table_agr[, c("value_label_en", "corine3_code", "eco_con_coeff")])
+
+    eco_con_coeff$value_label <- eco_con_coeff$value_label_en
+
+    eco_con_coeff$value_label_en <- NULL
+
+  }
+
+
 
   # creating a unique label to assign the correct eco_con coefficient
 

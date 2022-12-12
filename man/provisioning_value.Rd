@@ -4,7 +4,14 @@
 \alias{provisioning_value}
 \title{Computing the ecosystems' contribution to the provision of food and wood}
 \usage{
-provisioning_value(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, corine_code)
+provisioning_value(
+  nuts = "Italia",
+  h = 3,
+  last_yr,
+  ref_yr = 2019,
+  corine_code,
+  lang = "it"
+)
 }
 \arguments{
 \item{nuts}{A character vector. The names of the the Italian NUTS2 regions of interest. Names
@@ -21,6 +28,9 @@ is `3`.}
 
 \item{corine_code}{A numeric vector. Vector of the Corine classes (level 3) for which the average
 area must be computed.}
+
+\item{lang}{character string. Either `en` or `it`, to specify in which language Corine classes and crop labels must
+be returned. Default value is `it`.}
 }
 \value{
 a Tibble with Corine 3 codes and labels, total unit value of agricultural production (three-year average
