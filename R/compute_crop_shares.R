@@ -20,9 +20,9 @@ compute_crop_shares <- function (nuts = "Italia", last_yr = 2019, h = 3){
     dplyr::group_by(label, rse_class) %>%
     dplyr::summarise(area = mean(area, na.rm = TRUE)) %>%
     dplyr::ungroup() %>%
-    dplyr::left_join(nuts2_codes)
+    dplyr::left_join(ecoservr::nuts2_codes)
 
-  nuts_code <- nuts2_codes[nuts2_codes$label %in% nuts, ]$code
+  nuts_code <- ecoservr::nuts2_codes[ecoservr::nuts2_codes$label %in% nuts, ]$code
 
   estat_codes <- lapply(nuts_code, function (x) {
     paste0("Eurostat/apro_cpshr/A.UAA.MA.",

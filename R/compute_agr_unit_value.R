@@ -17,7 +17,7 @@
 #' corine_code = c(211, 222, 242)
 #' )
 #'
-compute_agr_unit_values <- function (nuts = "Italia", h = 3, last_yr, ref_yr = 2019, corine_code) {
+compute_agr_unit_values <- function (nuts = "Italia", h = 3, last_yr, ref_yr = 2019, corine_code, lang = "it") {
 
   area <- value <- NULL
 

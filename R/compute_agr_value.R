@@ -8,14 +8,14 @@
 #' @return A tibble with NUTS2 codes, corine3 codes and average production value in the time frame specified
 #'     (expressed in constat million euro, at the prices of `last_yr`).
 #'
-compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, corine_code) {
+compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, corine_code, lang = "it") {
 
   code <- original_period <- corine3_code <- defl <- value_label <- value_code <- unit <- fct <- NULL
 
   if (212 %in% corine_code)
     stop("The Corine 3 class '212' (Permanently irrigated land) cannot be selected. Please use '211' (non-irrigated arable land) instead.")
 
-  geo <- nuts2_codes[nuts2_codes$label %in% nuts, ]$code
+  geo <- ecoservr::nuts2_codes[ecoservr::nuts2_codes$label %in% nuts, ]$code
 
   # downloading GDP deflator (ITALY)
 
@@ -28,8 +28,26 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
 
   if (!is.element(211, corine_code) | 211 %in% corine_code & length(corine_code) > 1) {
 
-  metadata <- master_table_agr[master_table_agr$corine3_code %in% corine_code[corine_code != 211], # exluding arable land
-                           c("value_label", "value_code", "unit", "corine3_code")]
+    if (lang == "it") {
+
+
+      metadata <- ecoservr::master_table_agr[ecoservr::master_table_agr$corine3_code %in% corine_code, # excluding arable land
+                                   c("value_label_it", "area_code", "strucpro", "corine3_code")]
+
+      metadata$value_label <- metadata$value_label_it
+
+      metadata$value_label_it <- NULL
+
+    } else {
+
+      metadata <- ecoservr::master_table_agr[ecoservr::master_table_agr$corine3_code %in% corine_code, # excluding arable land
+                                   c("value_label_en", "area_code", "strucpro", "corine3_code")]
+
+      metadata$value_label <- metadata$value_label_en
+
+      metadata$value_label_en <- NULL
+
+    }
 
   metadata <- lapply(geo, function(x){
 
@@ -93,7 +111,7 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
 
     main_crop <- most_common_crop(nuts, h, last_yr)[, c("code", "value_label")]
 
-    metadata_arable <- master_table_agr %>%
+    metadata_arable <- ecoservr::master_table_agr %>%
       dplyr::filter(value_label %in% main_crop$value_label) %>%
       dplyr::left_join(main_crop) %>%
       dplyr::mutate(full_code = paste0("Eurostat/agr_r_accts/A.PROD_BP.",
@@ -146,7 +164,7 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
   # adjusting values for for mixed agricultural-natural land Corine classes (i.e. Complex cultivation patterns)
   # Adjusting factors can be found in the master_table_agr
 
-  adj_fct <- master_table_agr[master_table_agr$corine3_code %in% value$corine3_code, c("corine3_code", "fct")] %>%
+  adj_fct <- ecoservr::master_table_agr[ecoservr::master_table_agr$corine3_code %in% value$corine3_code, c("corine3_code", "fct")] %>%
     unique()
 
   value %>%

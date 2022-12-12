@@ -17,7 +17,7 @@ compute_agr_value_pollination <- function (nuts = "Italia", ref_yr = 2019,
   year <- label <- rse_class <- area <- geo <- original_period <- series_code <- value <- defl <-
     crop_label <- A.02910.PROD_BP.MIO_EUR.IT <- A.I2000.AR.IT <- unit_value <- NULL
 
-  nuts_code <- nuts2_codes[nuts2_codes$label %in% nuts, ]$code
+  nuts_code <- ecoservr::nuts2_codes[ecoservr::nuts2_codes$label %in% nuts, ]$code
 
   period <- c((last_yr - h + 1):last_yr)
 
@@ -28,7 +28,7 @@ compute_agr_value_pollination <- function (nuts = "Italia", ref_yr = 2019,
     dplyr::group_by(label, rse_class) %>%
     dplyr::summarise(area = mean(area, na.rm = TRUE)) %>%
     dplyr::ungroup() %>%
-    dplyr::left_join(nuts2_codes)
+    dplyr::left_join(ecoservr::nuts2_codes)
 
   # Downloading data from Eurostat
 
@@ -125,7 +125,7 @@ compute_agr_value_pollination <- function (nuts = "Italia", ref_yr = 2019,
       "legumi"
     ), series_code = NULL
     ) %>%
-    dplyr::left_join(nuts2_codes, by = c("geo" = "code")) %>%
+    dplyr::left_join(ecoservr::nuts2_codes, by = c("geo" = "code")) %>%
     dplyr::select(-geo)
 
   # other oilseed crops
@@ -149,7 +149,7 @@ compute_agr_value_pollination <- function (nuts = "Italia", ref_yr = 2019,
     dplyr::summarise(value = sum(value, na.rm = TRUE)) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(crop_label = "altri semi da olio") %>%
-    dplyr::left_join(nuts2_codes, by = c("geo" = "code")) %>%
+    dplyr::left_join(ecoservr::nuts2_codes, by = c("geo" = "code")) %>%
     dplyr::select(-geo)
 
   # fiber crops

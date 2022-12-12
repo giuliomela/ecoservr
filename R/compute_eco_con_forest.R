@@ -4,7 +4,7 @@
 #' in Italian NUTS2 regions.
 #'
 #' @param nuts A character vector. The names of the the Italian NUTS2 regions of interest. Names
-#'     must be in Italian and chosen among the folloqing list: `r knitr::combine_words(nuts2_codes$label)`.
+#'     must be in Italian and chosen among the folloqing list: `r knitr::combine_words(ecoservr::nuts2_codes$label)`.
 #'     `Bolzano` and `Trento` are treated as separate regions. Data on `Italia` as a whole can be retrieved
 #'     as well.
 #' @param eco_con_timber A numeric value. The ecosystems contribution to wood suppl. It can range between 0 (no ecosystem
@@ -24,9 +24,9 @@ compute_eco_con_forest <- function(nuts = "Italia", eco_con_timber = 0.97, nai_v
   eco_con_coeff<- eco_contribution <- faws <- label <- maes <- nai_euro <- nai_m3_faws <-
   original_period <- unit_value <- value <- value_label <- NULL
 
-  if (any(!is.element(nuts, nuts2_codes$label)) == TRUE)
+  if (any(!is.element(nuts, ecoservr::nuts2_codes$label)) == TRUE)
     stop(paste0("Please provide a valid NUTS2 name. Pick a name among: ",
-                knitr::combine_words(nuts2_codes$label, and = "or ")))
+                knitr::combine_words(ecoservr::nuts2_codes$label, and = "or ")))
 
   # downloading GDP deflator (ITALY)
 

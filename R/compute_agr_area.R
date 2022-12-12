@@ -6,26 +6,48 @@
 #' @inheritParams most_common_crop
 #' @param corine_code A numeric vector. Vector of the Corine classes (level 3) for which the average
 #'     area must be computed.
+#' @param lang character string. Either `en` or `it`, to specify in which language Corine classes and crop labels must
+#'     be returned. Default value is `it`.
 #' @return A tibble with NUTS2 codes, corine3 codes and average area in the time frame specified (expressed in 000 ha)
 #'
-compute_agr_area <- function(nuts = "Italia", h = 3, last_yr, corine_code) {
+compute_agr_area <- function(nuts = "Italia", h = 3, last_yr, corine_code, lang = "it") {
 
-  original_period <- corine3_code <- value <- code <- value_label <- NULL
+  original_period <- corine3_code <- value <- code <- value_label_en <- value_label_en_it <- value_label <- NULL
 
-  if (any(!is.element(nuts, nuts2_codes$label)) == TRUE)
+  if (!is.element(lang, c("en", "it"))) stop("Please provide a valid 'lang' value: either 'it' or 'en")
+
+  if (any(!is.element(nuts, ecoservr::nuts2_codes$label)) == TRUE)
     stop(paste0("Please provide a valid NUTS2 name. Pick a name among: ",
-                knitr::combine_words(nuts2_codes$label, and = "or ")))
+                knitr::combine_words(ecoservr::nuts2_codes$label, and = "or ")))
 
   admitted_corine_codes <- intersect(corine_code,
-                                     unique(master_table_agr$corine3_code)
+                                     unique(ecoservr::master_table_agr$corine3_code)
   )
 
-  geo <- nuts2_codes[nuts2_codes$label %in% nuts, ]$code
+  geo <- ecoservr::nuts2_codes[ecoservr::nuts2_codes$label %in% nuts, ]$code
 
   if (!is.element(211, admitted_corine_codes) | 211 %in% corine_code & length(admitted_corine_codes) > 1) {
 
-    metadata <- master_table_agr[master_table_agr$corine3_code %in% admitted_corine_codes[admitted_corine_codes != 211], # exluding arable land
-                             c("value_label", "area_code", "strucpro", "corine3_code")]
+    if (lang == "it") {
+
+
+      metadata <- ecoservr::master_table_agr[ecoservr::master_table_agr$corine3_code %in% admitted_corine_codes[admitted_corine_codes != 211], # excluding arable land
+                                   c("value_label_it", "area_code", "strucpro", "corine3_code")]
+
+      metadata$value_label <- metadata$value_label_it
+
+      metadata$value_label_it <- NULL
+
+    } else {
+
+      metadata <- ecoservr::master_table_agr[ecoservr::master_table_agr$corine3_code %in% admitted_corine_codes[admitted_corine_codes != 211], # excluding arable land
+                                   c("value_label_en", "area_code", "strucpro", "corine3_code")]
+
+      metadata$value_label <- metadata$value_label_en
+
+      metadata$value_label_en <- NULL
+
+    }
 
     metadata <- lapply(geo, function(x){
 

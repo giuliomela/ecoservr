@@ -4,11 +4,11 @@
 \alias{most_common_crop}
 \title{Identifying the most common crop grown on arable land}
 \usage{
-most_common_crop(nuts = "Italia", h = 3, last_yr)
+most_common_crop(nuts = "Italia", h = 3, last_yr, lang = "it")
 }
 \arguments{
 \item{nuts}{A character vector. The names of the the Italian NUTS2 regions of interest. Names
-must be in Italian and chosen among the folloqing list: `r knitr::combine_words(nuts2_codes$label)`.
+must be in Italian and chosen among the folloqing list: `r knitr::combine_words(ecoservr::nuts2_codes$label)`.
 `Bolzano` and `Trento` are treated as separate regions. Data on `Italia` as a whole can be retrieved
 as well.}
 
@@ -16,6 +16,9 @@ as well.}
 is `3`.}
 
 \item{last_yr}{An integer. The latest (meaning most recent) year from which computing average areas.}
+
+\item{lang}{character string. Either `en` or `it`, to specify in which language Corine classes and crop labels must
+be returned. Default value is `it`.}
 }
 \value{
 A tibble with the average area occupied by crops grown on arable land.

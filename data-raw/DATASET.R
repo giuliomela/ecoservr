@@ -19,10 +19,15 @@ nuts2_codes <- readxl::read_xlsx(here::here("data-raw/data_raw.xlsx"),
 master_table_agr <- readxl::read_xlsx(here::here("data-raw/data_raw.xlsx"),
                                   sheet = "master_table_agr")
 
-# loasing corine - maes conversion table
+# loading corine - maes conversion table
 
 maes_corine <- readxl::read_xlsx(here::here("data-raw/data_raw.xlsx"),
                                  sheet = "maes_corine")
+
+# loading crop label conversion table
+
+crop_labels <- readxl::read_excel(here::here("data-raw/data_raw.xlsx"),
+                                  sheet = "crop_names_it_en")
 
 ##### Forestry data
 
@@ -197,13 +202,13 @@ landscape_values_raw <- readxl::read_xlsx(here::here("data-raw/data_raw.xlsx"),
 
 
 
-usethis::use_data(nuts2_codes, master_table_agr, val_prod_forest, forestry_data,
-                  maes_corine, crop_area_istat, crop_value_istat, pollination_dependence,
+usethis::use_data(val_prod_forest, forestry_data,
+                  crop_area_istat, crop_value_istat, pollination_dependence,
                   landscape_values_raw,
                   overwrite = TRUE, internal = TRUE)
 
 usethis::use_data(nuts2_codes, master_table_agr,
-                  maes_corine, internal = FALSE)
+                  maes_corine, overwrite = TRUE, internal = FALSE)
 
 
 

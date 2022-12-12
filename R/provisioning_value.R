@@ -16,14 +16,14 @@
 #' last_yr = 2019, ref_yr = 2019, corine_code = c(211, 222, 231))
 provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, corine_code) {
 
-  corine3_code <- value_label <- unit_value <- label <- corine3_label <- maes <- NULL
+  corine3_code <- value_label <- unit_value <- label <- corine3_label_en <- corine3_label_it <- maes <- NULL
 
-  cropland_codes <- intersect(corine_code, maes_corine[maes_corine$maes %in% c("Cropland", "Grasslands"), ]$corine3_code) # subvector of cropland codes
+  cropland_codes <- intersect(corine_code, ecoservr::maes_corine[ecoservr::maes_corine$maes %in% c("Cropland", "Grasslands"), ]$corine3_code) # subvector of cropland codes
 
-  forest_codes <- intersect(corine_code, maes_corine[maes_corine$maes == "Woodland and forest", ]$corine3_code) # subvector of forest codes
+  forest_codes <- intersect(corine_code, ecoservr::maes_corine[ecoservr::maes_corine$maes == "Woodland and forest", ]$corine3_code) # subvector of forest codes
      # corine codes belonging to MAES cropland ecosystem
 
-  other_codes <- setdiff(corine_code, maes_corine[is.element(maes_corine$maes, c("Cropland", "Grasslands", "Woodland and forest")), ]$corine3_code) # codes of corine classes not providing neither food nor wood
+  other_codes <- setdiff(corine_code, ecoservr::maes_corine[is.element(ecoservr::maes_corine$maes, c("Cropland", "Grasslands", "Woodland and forest")), ]$corine3_code) # codes of corine classes not providing neither food nor wood
 
   if (length(cropland_codes) > 0) {
   # CROPLAND
@@ -34,7 +34,7 @@ provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, c
                                      ref_yr = ref_yr,
                                      corine_code = cropland_codes)
 
-  eco_con_coeff <- unique(master_table_agr[, c("value_label", "corine3_code", "eco_con_coeff")])
+  eco_con_coeff <- unique(ecoservr::master_table_agr[, c("value_label", "corine3_code", "eco_con_coeff")])
 
   # creating a unique label to assign the correct eco_con coefficient
 
@@ -58,9 +58,9 @@ provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, c
   # Preparing final output
 
   eco_contr_cropland <- eco_contribution %>%
-    dplyr::left_join(nuts2_codes) %>%
-    dplyr::left_join(maes_corine) %>%
-    dplyr::select(label, corine3_code, corine3_label, maes, unit_value, eco_con_coeff, eco_contribution)
+    dplyr::left_join(ecoservr::nuts2_codes) %>%
+    dplyr::left_join(ecoservr::maes_corine) %>%
+    dplyr::select(label, corine3_code, corine3_label_en, corine3_label_it, maes, unit_value, eco_con_coeff, eco_contribution)
 
   } else {
 
@@ -81,8 +81,9 @@ provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, c
   eco_contr_forest$corine3_code <- forest_codes
 
   eco_contr_forest <- eco_contr_forest %>%
-    dplyr::left_join(maes_corine) %>%
-    dplyr::select(label, corine3_code, corine3_label, maes, unit_value, eco_con_coeff, eco_contribution)
+    dplyr::left_join(ecoservr::maes_corine) %>%
+    dplyr::select(label, corine3_code, corine3_label_en, corine3_label_it,
+                  maes, unit_value, eco_con_coeff, eco_contribution)
 
   } else {
 
@@ -103,8 +104,8 @@ provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, c
     eco_contr_other$corine3_code <- other_codes
 
     eco_contr_other <- eco_contr_other %>%
-      dplyr::left_join(maes_corine) %>%
-      dplyr::select(label, corine3_code, corine3_label, maes, unit_value, eco_con_coeff, eco_contribution)
+      dplyr::left_join(ecoservr::maes_corine) %>%
+      dplyr::select(label, corine3_code, corine3_label_en, corine3_label_it, maes, unit_value, eco_con_coeff, eco_contribution)
 
   } else {
 
