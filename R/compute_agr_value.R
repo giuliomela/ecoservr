@@ -32,7 +32,7 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
   if (!is.element(211, corine_code) | 211 %in% corine_code & length(corine_code) > 1) {
 
 
-      metadata <- ecoservr::master_table_agr[ecoservr::master_table_agr$corine3_code %in% corine_code, # excluding arable land
+      metadata <- ecoservr::master_table_agr[ecoservr::master_table_agr$corine3_code %in% corine_code[corine_code != 211], # excluding arable land
                                    c(paste0("value_label_", lang), "corine3_code", "value_code", "unit")]
 
       metadata$value_label <- metadata[[paste0("value_label_", lang)]]
