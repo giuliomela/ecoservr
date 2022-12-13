@@ -13,6 +13,8 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
   code <- original_period <- corine3_code <- defl <- value_label <- value_label_it <-
     value_label_en <- value_code <- unit <- fct <- NULL
 
+  time_period <- as.character(c((last_yr - h + 1):last_yr))
+
   if (212 %in% corine_code)
     stop("The Corine 3 class '212' (Permanently irrigated land) cannot be selected. Please use '211' (non-irrigated arable land) instead.")
 
@@ -68,8 +70,6 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
 
   # summarizing data
 
-  time_period <- as.character(c((last_yr - h + 1):last_yr))
-
   corine_codes <- metadata[, c("corine3_code", "series_code")]
 
   data_raw <- data_raw %>%
@@ -111,9 +111,9 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
                                          ".",
                                          code))
 
-      metadata_arable$value_label <- metadata[["value_label_it"]]
+      metadata_arable$value_label <- metadata_arable[["value_label_it"]]
 
-      metadata[["value_label_it"]] <- NULL
+      metadata_arable[["value_label_it"]] <- NULL
 
     } else {
 
@@ -127,9 +127,9 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
                                          ".",
                                          code))
 
-      metadata_arable$value_label <- metadata[["value_label_en"]]
+      metadata_arable$value_label <- metadata_arable[["value_label_en"]]
 
-      metadata[["value_label_en"]] <- NULL
+      metadata_arable[["value_label_en"]] <- NULL
 
     }
 
@@ -150,9 +150,10 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
       stop(paste0("Please provide one of the following years as 'last year': ",
                   knitr::combine_words(data_raw_arable$original_period)))
 
-    data_raw_arable <- data_raw_arable[data_raw_arable$original_period %in% time_period, ]
+    #data_raw_arable <- data_raw_arable[data_raw_arable$original_period %in% time_period, ]
 
     avg_values_arable <- data_raw_arable %>%
+      dplyr::filter(original_period %in% time_period) %>%
       dplyr::left_join(gdp_defl) %>%
       dplyr::mutate(value = value / defl * ref_yr_dfl) %>%
       dplyr::group_by(code) %>%
