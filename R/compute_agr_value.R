@@ -29,26 +29,13 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
 
   if (!is.element(211, corine_code) | 211 %in% corine_code & length(corine_code) > 1) {
 
-    if (lang == "it") {
-
 
       metadata <- ecoservr::master_table_agr[ecoservr::master_table_agr$corine3_code %in% corine_code, # excluding arable land
-                                   c("value_label_it", "corine3_code", "value_code", "unit")]
+                                   c(paste0("value_label_", lang), "corine3_code", "value_code", "unit")]
 
-      metadata$value_label <- metadata$value_label_it
+      metadata$value_label <- metadata[[paste0("value_label_", lang)]]
 
-      metadata$value_label_it <- NULL
-
-    } else {
-
-      metadata <- ecoservr::master_table_agr[ecoservr::master_table_agr$corine3_code %in% corine_code, # excluding arable land
-                                   c("value_label_en", "corine3_code", "value_code", "unit")]
-
-      metadata$value_label <- metadata$value_label_en
-
-      metadata$value_label_en <- NULL
-
-    }
+      metadata[[paste0("value_label_", lang)]] <- NULL
 
   metadata <- lapply(geo, function(x){
 
@@ -124,9 +111,9 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
                                          ".",
                                          code))
 
-      metadata_arable$value_label <- metadata_arable$value_label_it
+      metadata_arable$value_label <- metadata[["value_label_it"]]
 
-      metadata_arable$value_label_it <- NULL
+      metadata[["value_label_it"]] <- NULL
 
     } else {
 
@@ -140,11 +127,12 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
                                          ".",
                                          code))
 
-      metadata_arable$value_label <- metadata_arable$value_label_en
+      metadata_arable$value_label <- metadata[["value_label_en"]]
 
-      metadata_arable$value_label_en <- NULL
+      metadata[["value_label_en"]] <- NULL
 
     }
+
 
 
 

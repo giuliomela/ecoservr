@@ -34,25 +34,12 @@ most_common_crop <- function(nuts = "Italia", h = 3, last_yr, lang = "it") {
 
   # filtering codes referring to arable land only
 
-  if (lang == "it") {
+    metadata <- ecoservr::master_table_agr[ecoservr::master_table_agr$corine3_code == 211, c(paste0("value_label_" , "it"),
+                                                                                             "area_code", "strucpro")]
 
-    metadata <- ecoservr::master_table_agr[ecoservr::master_table_agr$corine3_code == 211, c("value_label_it", "area_code", "strucpro")]
+    metadata$value_label <- metadata[[paste0("value_label_", lang)]]
 
-    metadata$value_label <- metadata$value_label_it
-
-    metadata$value_label_it <- NULL
-
-  } else {
-
-    metadata <- ecoservr::master_table_agr[ecoservr::master_table_agr$corine3_code == 211, c("value_label_en", "area_code", "strucpro")]
-
-    metadata$value_label <- metadata$value_label_en
-
-    metadata$value_label_en <- NULL
-
-  }
-
-
+    metadata[[paste0("value_label_", lang)]] <- NULL
 
   # dowloading area data
 

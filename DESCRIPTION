@@ -1,11 +1,11 @@
 Package: ecoservr
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Title: Estimates the economic value of ecosystem services
+Version: 0.1.1
+Author: Giulio Mela
+Maintainer: The package maintainer <giulio.mela@gmail.com>
+Description: An R package to compute the economic value of some ecosystem services
+    in Italian NUTS2 regions.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

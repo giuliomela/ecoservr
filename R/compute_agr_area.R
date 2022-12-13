@@ -28,26 +28,13 @@ compute_agr_area <- function(nuts = "Italia", h = 3, last_yr, corine_code, lang 
 
   if (!is.element(211, admitted_corine_codes) | 211 %in% corine_code & length(admitted_corine_codes) > 1) {
 
-    if (lang == "it") {
-
 
       metadata <- ecoservr::master_table_agr[ecoservr::master_table_agr$corine3_code %in% admitted_corine_codes[admitted_corine_codes != 211], # excluding arable land
-                                   c("value_label_it", "area_code", "strucpro", "corine3_code")]
+                                   c(paste0("value_label_", lang), "area_code", "strucpro", "corine3_code")]
 
-      metadata$value_label <- metadata$value_label_it
+      metadata$value_label <- metadata[[paste0("value_label_", lang)]]
 
-      metadata$value_label_it <- NULL
-
-    } else {
-
-      metadata <- ecoservr::master_table_agr[ecoservr::master_table_agr$corine3_code %in% admitted_corine_codes[admitted_corine_codes != 211], # excluding arable land
-                                   c("value_label_en", "area_code", "strucpro", "corine3_code")]
-
-      metadata$value_label <- metadata$value_label_en
-
-      metadata$value_label_en <- NULL
-
-    }
+      metadata[[paste0("value_label_", lang)]] <- NULL
 
     metadata <- lapply(geo, function(x){
 
