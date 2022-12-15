@@ -22,7 +22,8 @@ landscape_value <- function (nuts = "Italia", include_forest = FALSE, corine_cod
   corine3_code <- maes <- value <- study_area <- study_year <- NULL
 
   data_raw <- landscape_values_raw %>%
-    dplyr::filter(corine3_code %in% corine_code) %>%
+    dplyr::filter(corine3_code %in% corine_code &
+                    !is.na(study_area)) %>%
     dplyr::select(corine3_code, maes, value, study_area, study_year) # subsetting the original values dataset
 
   n_rows_raw <- nrow(data_raw)
