@@ -9,7 +9,6 @@
 #' @param lang character string. Either `en` or `it`, to specify in which language Corine classes and crop labels must
 #'     be returned. Default value is `it`.
 #' @return A tibble with NUTS2 codes, corine3 codes and average area in the time frame specified (expressed in 000 ha)
-#'
 compute_agr_area <- function(nuts = "Italia", h = 3, last_yr, corine_code, lang = "it") {
 
   original_period <- corine3_code <- value <- code <- value_label_en <- value_label_en_it <- value_label <- NULL

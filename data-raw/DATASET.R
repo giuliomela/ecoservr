@@ -200,11 +200,16 @@ pollination_dependence <- readxl::read_xlsx(here::here("data-raw/data_raw.xlsx")
 landscape_values_raw <- readxl::read_xlsx(here::here("data-raw/data_raw.xlsx"),
                                  sheet = "landscape_values")
 
+#Loading EcoConCoefficients
+
+eco_con_coeff <- readxl::read_xlsx(here::here("data-raw/data_raw.xlsx"),
+                                   sheet = "eco_con_coeff")
+
 
 
 usethis::use_data(val_prod_forest, forestry_data,
                   crop_area_istat, crop_value_istat, pollination_dependence,
-                  landscape_values_raw,
+                  landscape_values_raw, eco_con_coeff,
                   overwrite = TRUE, internal = TRUE)
 
 usethis::use_data(nuts2_codes, master_table_agr,

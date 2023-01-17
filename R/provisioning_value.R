@@ -5,6 +5,12 @@
 #' for each of the Italian NUTS 2 regions and each of the Corine 3 classes selected.
 #'
 #' @inheritParams compute_agr_area
+#' @param corine_code A numeric vector. Vector of the Corine classes (level 3) for which the average
+#'     area must be computed. Default is set to `211` (Non-irrigated arable land).
+#' @param maes A character string. If can assume three values: `none`, `Cropland` and `Grasslands`. If it is set
+#'     to `none` (the default), unit values are computed for each of the corine codes specified via the `corine_code`
+#'     parameter. If either `Cropland` or `Grasslands` are specified, the unit value is computed aggregating all corine
+#'     codes belonging to the MAES ecosystem specified.
 #' @param ref_yr A numeric value. The year at which price levels monetary values must be expressed.
 #' @return a Tibble with Corine 3 codes and labels, total unit value of agricultural production (three-year average
 #' expressed in euro/ha), the `eco_con_coeff` used and the contribution of ecosystems to food provision computed
@@ -14,9 +20,14 @@
 #'
 #' provisioning_value(nuts = c("Umbria", "Puglia"),
 #' last_yr = 2019, ref_yr = 2019, corine_code = c(211, 222, 231))
-provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, corine_code, lang = "it") {
+provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, corine_code = 211,
+                               maes = "none",
+                               lang = "it") {
 
-  corine3_code <- value_label <- unit_value <- label <- corine3_label_en <- corine3_label_it <- maes <- NULL
+
+  corine3_code <- value_label <- unit_value <- label <- corine3_label_en <- corine3_label_it <- NULL
+
+  if (maes == "none") {
 
   cropland_codes <- intersect(corine_code, ecoservr::maes_corine[ecoservr::maes_corine$maes %in% c("Cropland", "Grasslands"), ]$corine3_code) # subvector of cropland codes
 
@@ -51,7 +62,6 @@ provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, c
     eco_con_coeff$value_label_en <- NULL
 
   }
-
 
 
   # creating a unique label to assign the correct eco_con coefficient
@@ -132,5 +142,21 @@ provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, c
   }
 
     dplyr::bind_rows(eco_contr_cropland, eco_contr_forest, eco_contr_other)
+
+  } else {
+
+    unit_values <- compute_agr_unit_values(nuts = nuts,
+                                           h = h,
+                                           last_yr = last_yr,
+                                           ref_yr = ref_yr,
+                                           maes = maes)
+
+    unit_values$eco_con_coeff <- eco_con_coeff[eco_con_coeff$crop == "average", ]$eco_con_coeff
+
+    unit_values$eco_contribution <- unit_values$eco_con_coeff * unit_values$unit_value
+
+    unit_values
+
+  }
 
 }

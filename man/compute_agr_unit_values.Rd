@@ -9,7 +9,8 @@ compute_agr_unit_values(
   h = 3,
   last_yr,
   ref_yr = 2019,
-  corine_code,
+  corine_code = 211,
+  maes = "none",
   lang = "it"
 )
 }
@@ -27,7 +28,12 @@ is `3`.}
 \item{ref_yr}{A numeric value. The year at which price levels monetary values must be expressed.}
 
 \item{corine_code}{A numeric vector. Vector of the Corine classes (level 3) for which the average
-area must be computed.}
+area must be computed. Default is set to `211` (Non-irrigated arable land).}
+
+\item{maes}{A character string. If can assume three values: `none`, `Cropland` and `Grasslands`. If it is set
+to `none` (the default), unit values are computed for each of the corine codes specified via the `corine_code`
+parameter. If either `Cropland` or `Grasslands` are specified, the unit value is computed aggregating all corine
+codes belonging to the MAES ecosystem specified.}
 
 \item{lang}{character string. Either `en` or `it`, to specify in which language Corine classes and crop labels must
 be returned. Default value is `it`.}
