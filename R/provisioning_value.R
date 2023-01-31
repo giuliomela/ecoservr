@@ -67,7 +67,7 @@ provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, c
   # creating a unique label to assign the correct eco_con coefficient
 
   eco_con_coeff$eco_con_label <- ifelse(
-    eco_con_coeff$corine3_code == 211,
+    eco_con_coeff$corine3_code %in% arable_land_codes,
     paste(eco_con_coeff$corine3_code, eco_con_coeff$value_label, sep = "_"),
     paste(eco_con_coeff$corine3_code, "NA", sep = "_")
   )
