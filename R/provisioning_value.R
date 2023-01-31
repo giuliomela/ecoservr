@@ -25,7 +25,7 @@ provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, c
                                lang = "it") {
 
 
-  corine3_code <- value_label <- unit_value <- label <- corine3_label_en <- corine3_label_it <- NULL
+  corine3_code <- value_label <- arable_land_codes <- unit_value <- label <- corine3_label_en <- corine3_label_it <- NULL
 
   if (maes == "none") {
 
@@ -65,6 +65,8 @@ provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, c
 
 
   # creating a unique label to assign the correct eco_con coefficient
+
+  arable_land_codes <- c(211, 212)
 
   eco_con_coeff$eco_con_label <- ifelse(
     eco_con_coeff$corine3_code %in% arable_land_codes,
@@ -151,7 +153,7 @@ provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, c
                                            ref_yr = ref_yr,
                                            maes = maes)
 
-    unit_values$eco_con_coeff <- eco_con_coeff[eco_con_coeff$crop == "average", ]$eco_con_coeff
+    unit_values$eco_con_coeff <- eco_con_coeff_table[eco_con_coeff_table$crop == "average", ]$eco_con_coeff
 
     unit_values$eco_contribution <- unit_values$eco_con_coeff * unit_values$unit_value
 

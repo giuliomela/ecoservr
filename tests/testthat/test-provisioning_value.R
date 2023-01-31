@@ -6,8 +6,6 @@ test_that("provisioning_value works", {
 
   all_corine_codes_no_212 <- all_corine_codes[-2]
 
-  expect_error(provisioning_value(nuts, last_yr = 2019, corine_code = all_corine_codes))
-
   res <- provisioning_value(nuts, last_yr = 2019, corine_code = all_corine_codes_no_212)
 
   expect_true(is.data.frame(res))

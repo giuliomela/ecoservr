@@ -26,7 +26,7 @@
 compute_agr_unit_values <- function (nuts = "Italia", h = 3, last_yr, ref_yr = 2019, corine_code = 211,
                                      maes = "none", lang = "it") {
 
-  area <- value <- code <- NULL
+  area <- value <- code <- unit_value <- area_corine <- NULL
 
   if (!is.element(maes, c("none", "Grasslands", "Cropland"))) stop ("Please provide a valid MAES ecosystem name. For provisioning services either 'none', 'Cropland' or 'Grasslands' can be specified")
 
