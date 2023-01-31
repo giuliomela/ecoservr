@@ -25,11 +25,16 @@ compute_agr_area <- function(nuts = "Italia", h = 3, last_yr, corine_code, lang 
 
   geo <- ecoservr::nuts2_codes[ecoservr::nuts2_codes$label %in% nuts, ]$code
 
-  if (!is.element(211, admitted_corine_codes) | 211 %in% corine_code & length(admitted_corine_codes) > 1) {
+  arable_land_codes <- c(211, 212)
 
-
-      metadata <- ecoservr::master_table_agr[ecoservr::master_table_agr$corine3_code %in% admitted_corine_codes[admitted_corine_codes != 211], # excluding arable land
+      metadata <- ecoservr::master_table_agr[ecoservr::master_table_agr$corine3_code %in% corine_code[!is.element(corine_code, arable_land_codes)], # excluding arable land
                                    c(paste0("value_label_", lang), "area_code", "strucpro", "corine3_code")]
+
+      if (nrow(metadata) == 0) {
+
+        avg_areas <- NULL
+
+      } else {
 
       metadata$value_label <- metadata[[paste0("value_label_", lang)]]
 
@@ -87,30 +92,37 @@ compute_agr_area <- function(nuts = "Italia", h = 3, last_yr, corine_code, lang 
     dplyr::mutate(value_label = NA_character_) %>%
     dplyr::rename(code = geo)
 
-  }
+      }
 
-  if (is.element(211, admitted_corine_codes)) {
+  if (any(is.element(arable_land_codes, corine_code))) {
 
     # If the chosen Corine class is "arable land" the most common crop grown in the region is identified
 
     main_crop <- ecoservr::most_common_crop(nuts, h, last_yr)
 
     main_crop <- main_crop %>%
-      dplyr::select(code, value_label, area = value) %>%
-      dplyr::mutate(corine3_code = 211)
+      dplyr::select(code, value_label, area = value)
 
 
   }
 
-  if (length(admitted_corine_codes) == 1 & 211 %in% admitted_corine_codes) {
+  if (length(corine_code) == 1 & any(arable_land_codes %in% corine_code)) {
 
-    main_crop
+    main_crop %>%
+      dplyr::mutate(corine3_code = corine_code)
 
-  } else if (!is.element(211, admitted_corine_codes)){
+  } else if (!any(is.element(arable_land_codes, corine_code))){
 
     avg_areas
 
-  } else {
+  } else if (length(corine_code) > 1 & any(arable_land_codes %in% corine_code)) {
+
+    codes_to_add <- intersect(arable_land_codes, corine_code)
+
+    main_crop <- lapply(codes_to_add, function(x) main_crop %>%
+                                  dplyr::mutate(corine3_code = x)) %>%
+      dplyr::bind_rows()
+
 
     dplyr::bind_rows(main_crop, avg_areas)
 
