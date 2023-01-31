@@ -205,11 +205,22 @@ landscape_values_raw <- readxl::read_xlsx(here::here("data-raw/data_raw.xlsx"),
 eco_con_coeff <- readxl::read_xlsx(here::here("data-raw/data_raw.xlsx"),
                                    sheet = "eco_con_coeff")
 
+# Loading land use cover data (Data regarding Trento and Bolzano are "simulated" using aggregate data about
+# Trentino Altoadige (date divided by 2))
 
+corine_area <- readxl::read_xlsx(here::here("data-raw/data_raw.xlsx"),
+                                 sheet = "corine_area")
+
+corine_area <- corine_area %>%
+  group_by(corine3_code) %>%
+  summarise(area_corine = sum(area_corine)) %>% # add Italy's value
+  ungroup() %>%
+  mutate(code = "IT", label = "Italia", um = "ha") %>%
+  bind_rows(corine_area)
 
 usethis::use_data(val_prod_forest, forestry_data,
                   crop_area_istat, crop_value_istat, pollination_dependence,
-                  landscape_values_raw, eco_con_coeff,
+                  landscape_values_raw, eco_con_coeff, corine_area,
                   overwrite = TRUE, internal = TRUE)
 
 usethis::use_data(nuts2_codes, master_table_agr,

@@ -57,14 +57,14 @@ compute_agr_unit_values <- function (nuts = "Italia", h = 3, last_yr, ref_yr = 2
   if (maes != "none") {
 
     unit_values <- unit_values %>%
-      dplyr::group_by(code) %>%
-      dplyr::summarise(dplyr::across(c(area, value), sum, na.rm = FALSE)) %>%
-      dplyr::ungroup() %>%
+      dplyr::left_join(corine_area) %>%
       dplyr::mutate(unit_value = ifelse(area == 0 | value == 0,
                                         0,
-                                        value / area * 1000),
-                    maes = maes
-      )
+                                        value / area * 1000)) %>%
+      dplyr::group_by(code) %>%
+      dplyr::summarise(unit_value = stats::weighted.mean(unit_value, area_corine),
+                       maes = maes) %>%
+      dplyr::ungroup()
 
   } else {
 
