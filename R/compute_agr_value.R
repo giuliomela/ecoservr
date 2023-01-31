@@ -15,8 +15,8 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
 
   time_period <- as.character(c((last_yr - h + 1):last_yr))
 
-  if (212 %in% corine_code)
-    stop("The Corine 3 class '212' (Permanently irrigated land) cannot be selected. Please use '211' (non-irrigated arable land) instead.")
+  # if (212 %in% corine_code)
+  #   stop("The Corine 3 class '212' (Permanently irrigated land) cannot be selected. Please use '211' (non-irrigated arable land) instead.")
 
   geo <- ecoservr::nuts2_codes[ecoservr::nuts2_codes$label %in% nuts, ]$code
 
@@ -28,20 +28,27 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
 
   ref_yr_dfl <- gdp_defl[gdp_defl$original_period == as.character(ref_yr), ]$defl
 
+  arable_land_codes <- c(211, 212)
 
-  if (!is.element(211, corine_code) | 211 %in% corine_code & length(corine_code) > 1) {
+  # Computing average agricultural value of non-arable land classes
 
 
-      metadata <- ecoservr::master_table_agr[ecoservr::master_table_agr$corine3_code %in% corine_code[corine_code != 211], # excluding arable land
+      metadata <- ecoservr::master_table_agr[ecoservr::master_table_agr$corine3_code %in% corine_code[!is.element(corine_code, arable_land_codes)], # excluding arable land
                                    c(paste0("value_label_", lang), "corine3_code", "value_code", "unit")]
+
+      if (nrow(metadata) == 0) {
+
+        avg_values <- NULL
+
+      } else {
 
       metadata$value_label <- metadata[[paste0("value_label_", lang)]]
 
       metadata[[paste0("value_label_", lang)]] <- NULL
 
-  metadata <- lapply(geo, function(x){
+      metadata <- lapply(geo, function(x){
 
-    output <- transform(metadata,
+      output <- transform(metadata,
                         nuts = x)
 
     output
@@ -91,9 +98,9 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
     dplyr::summarise(value = mean(value, na.rm = TRUE)) %>%
     dplyr::ungroup()
 
-  }
+      }
 
-  if (is.element(211, corine_code)) {
+  if (any(is.element(arable_land_codes, corine_code))) {
 
     # If the chosen Corine class is "arable land" the most common crop grown in the region is identified
 
@@ -133,9 +140,6 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
 
     }
 
-
-
-
     data_raw_arable <- rdbnomics::rdb(metadata_arable$full_code)
 
     data_raw_arable <- data_raw_arable %>%
@@ -163,15 +167,22 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
 
   }
 
-  if (length(corine_code) == 1 & 211 %in% corine_code) {
+  if (length(corine_code) == 1 & any(arable_land_codes %in% corine_code)) {
 
-    value <- avg_values_arable
+    value <- avg_values_arable %>%
+      dplyr::mutate(corine3_code = corine_code)
 
-  } else if (!is.element(211, corine_code)){
+  } else if (!any(is.element(arable_land_codes, corine_code))){
 
     value <- avg_values
 
-  } else {
+  } else if (length(corine_code) > 1 & any(arable_land_codes %in% corine_code)) {
+
+    codes_to_add <- intersect(arable_land_codes, corine_code)
+
+    avg_values_arable <- lapply(codes_to_add, function(x) avg_values_arable %>%
+             dplyr::mutate(corine3_code = x)) %>%
+      dplyr::bind_rows()
 
     value <- dplyr::bind_rows(avg_values, avg_values_arable)
 
