@@ -25,7 +25,8 @@ provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, c
                                lang = "it") {
 
 
-  corine3_code <- value_label <- arable_land_codes <- unit_value <- label <- corine3_label_en <- corine3_label_it <- NULL
+  corine3_code <- value_label <- arable_land_codes <- maes_corine <- area_corine <-
+    unit_value <- label <- corine3_label_en <- corine3_label_it <- NULL
 
   if (maes == "none") {
 
@@ -35,6 +36,17 @@ provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, c
      # corine codes belonging to MAES cropland ecosystem
 
   other_codes <- setdiff(corine_code, ecoservr::maes_corine[is.element(ecoservr::maes_corine$maes, c("Cropland", "Grasslands", "Woodland and forest")), ]$corine3_code) # codes of corine classes not providing neither food nor wood
+
+  } else { # ecosystem specific means
+
+  cropland_codes <- unlist(lapply(maes,
+                           function(x) ecoservr::maes_corine[ecoservr::maes_corine$maes == x, ]$corine3_code))
+
+  forest_codes <- NULL
+
+  other_codes <- NULL
+
+  }
 
   if (length(cropland_codes) > 0) {
   # CROPLAND
@@ -90,7 +102,22 @@ provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, c
   eco_contr_cropland <- eco_contribution %>%
     dplyr::left_join(ecoservr::nuts2_codes) %>%
     dplyr::left_join(ecoservr::maes_corine) %>%
-    dplyr::select(label, corine3_code, corine3_label_en, corine3_label_it, maes, unit_value, eco_con_coeff, eco_contribution)
+    dplyr::left_join(corine_area[, c("label", "corine3_code", "area_corine")]) %>%
+    dplyr::select(label, corine3_code, corine3_label_en, area_corine,
+                  corine3_label_it, maes, unit_value, eco_con_coeff, eco_contribution) %>%
+    dplyr::mutate(eco_contribution = ifelse(is.na(area_corine),
+                                            0,
+                                            eco_contribution)) # if corine area is NA, no ecosystem service is provided
+
+  if (maes != "none") {
+
+    eco_contr_cropland <- eco_contr_cropland %>%
+      dplyr::filter(!is.na(area_corine)) %>% # removing NAs (corine classes not present in the regin considered)
+      dplyr::group_by(label, maes) %>%
+      dplyr::summarise(eco_contribution = stats::weighted.mean(eco_contribution, area_corine)) %>%
+      dplyr::ungroup()
+
+  }
 
   } else {
 
@@ -143,22 +170,15 @@ provisioning_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, c
 
   }
 
+  if (maes == "none") {
+
     dplyr::bind_rows(eco_contr_cropland, eco_contr_forest, eco_contr_other)
 
   } else {
 
-    unit_values <- compute_agr_unit_values(nuts = nuts,
-                                           h = h,
-                                           last_yr = last_yr,
-                                           ref_yr = ref_yr,
-                                           maes = maes)
-
-    unit_values$eco_con_coeff <- eco_con_coeff_table[eco_con_coeff_table$crop == "average", ]$eco_con_coeff
-
-    unit_values$eco_contribution <- unit_values$eco_con_coeff * unit_values$unit_value
-
-    unit_values
+    eco_contr_cropland
 
   }
+
 
 }
