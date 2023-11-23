@@ -6,7 +6,7 @@
 #' @inheritParams compute_agr_area
 #' @param ref_yr A numeric value. The year at which price levels monetary values must be expressed.
 #' @return A tibble with NUTS2 codes, corine3 codes and average production value in the time frame specified
-#'     (expressed in constat million euro, at the prices of `last_yr`).
+#'     (expressed in constant million euro, at the prices of `last_yr`).
 #'
 compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, corine_code, lang = "it") {
 
@@ -143,12 +143,13 @@ compute_agr_value <- function(nuts = "Italia", h = 3, last_yr, ref_yr = 2019, co
     data_raw_arable <- rdbnomics::rdb(metadata_arable$full_code)
 
     data_raw_arable <- data_raw_arable %>%
-      dplyr::rename(code = geo)
+      dplyr::rename(code = geo) %>%
+      dplyr::select(code, original_period, value)
 
-    data_raw_arable <- data_raw_arable %>%
-      dplyr::group_by(code, original_period) %>%
-      dplyr::summarise(value = sum(value, na.rm = TRUE)) %>%
-      dplyr::ungroup()
+    # data_raw_arable <- data_raw_arable %>%
+    #   dplyr::group_by(code, original_period) %>%
+    #   dplyr::summarise(value = sum(value, na.rm = TRUE)) %>%
+    #   dplyr::ungroup()
 
     if(!is.element(as.character(last_yr), data_raw_arable$original_period))
       stop(paste0("Please provide one of the following years as 'last year': ",

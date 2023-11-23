@@ -30,6 +30,7 @@ compute_agr_area <- function(nuts = "Italia", h = 3, last_yr, corine_code, lang 
       metadata <- ecoservr::master_table_agr[ecoservr::master_table_agr$corine3_code %in% corine_code[!is.element(corine_code, arable_land_codes)], # excluding arable land
                                    c(paste0("value_label_", lang), "area_code", "strucpro", "corine3_code")]
 
+
       if (nrow(metadata) == 0) {
 
         avg_areas <- NULL
@@ -102,7 +103,6 @@ compute_agr_area <- function(nuts = "Italia", h = 3, last_yr, corine_code, lang 
 
     main_crop <- main_crop %>%
       dplyr::select(code, value_label, area = value)
-
 
   }
 

@@ -41,15 +41,15 @@ compute_agr_unit_values <- function (nuts = "Italia", h = 3, last_yr, ref_yr = 2
   }
 
   areas <- compute_agr_area(nuts = nuts,
-                        h = h,
-                        last_yr = last_yr,
-                        corine_code = codes_to_download)
+                            h = h,
+                            last_yr = last_yr,
+                            corine_code = codes_to_download)
 
   values <- compute_agr_value(nuts = nuts,
-                          h = h,
-                          last_yr = last_yr,
-                          ref_yr = ref_yr,
-                          corine_code = codes_to_download)
+                              h = h,
+                              last_yr = last_yr,
+                              ref_yr = ref_yr,
+                              corine_code = codes_to_download)
 
   unit_values <- areas %>%
     dplyr::left_join(values)
